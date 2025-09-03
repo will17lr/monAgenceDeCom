@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import ejs from "ejs";
 import expressLayouts from "express-ejs-layouts";
 import methodOverride from "method-override";
+import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url"; // 👈 import nécessaire
 import { dirname } from "path";
@@ -36,16 +37,13 @@ app.use(
     cookie: { secure: false },
   })
 );
-app.use((req, res, next) => {
-  res.locals.style = "index"; // valeur par défaut
-  next();
-});
 
 app.use("/", userRoutes);
 
 //settings
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.set("layout", "layout/layout");
 
 //appel de la connexion DB Catalogue + écoute du serveur sur le port 3000
 app.listen(port, () => {
