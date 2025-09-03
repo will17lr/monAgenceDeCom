@@ -1,0 +1,12 @@
+PORT=3000
+
+URI_MONGODB=mongodb+srv://Joris:1234@cluster0.inbaf7r.mongodb.net/
+
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_SECURE=false
+EMAIL_USER=francois.baraton.fb@gmail.com
+EMAIL_PASS=woooufxvznroypxo
+
+
+EMAIL_FROM_NAME=nodemailer
