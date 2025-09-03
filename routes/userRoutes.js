@@ -20,10 +20,10 @@ userRouter.post("/register", validate(createUserSchema), userController.create);
 
 userRouter.post("/login", userController.login);
 
-// userRouter.post("/password-reset-request", userController.requestPasswordReset);
+userRouter.post("/password-reset-request", userController.requestPasswordReset);
 
-// userRouter.post("/reset-password/:token", userController.resetPassword);
+userRouter.post("/reset-password/:token", userController.resetPassword);
 
-// userRouter.post("/resend-verification", userController.resendVerificationEmail);
+userRouter.post("/resend-verification", userController.resendVerificationEmail);
 
 export default userRouter;
