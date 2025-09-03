@@ -1,0 +1,7 @@
+<% layout('partials/layout') %>
+<h1>Utilisateurs</h1>
+<ul>
+  <% (users || []).forEach(u => { %>
+    <li><%= u.username || "—" %> — <%= u.email %></li>
+  <% }) %>
+</ul>

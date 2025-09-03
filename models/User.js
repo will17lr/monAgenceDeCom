@@ -36,11 +36,11 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpire: { type: Date },
 });
 
-// Middleware pour mettre à jour updatedAt
-userSchema.pre("save", function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
+// // Middleware pour mettre à jour updatedAt
+// userSchema.pre("save", function (next) {
+//   this.updatedAt = Date.now();
+//   next();
+// });
 
 //Création du modèle User
 export default mongoose.model("User", userSchema);
