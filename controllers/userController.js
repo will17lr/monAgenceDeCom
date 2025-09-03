@@ -7,6 +7,9 @@ import "dotenv/config";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
 
+const port = process.env.PORT;
+const CLIENT_URL = process.env.CLIENT_URL;
+
 class userController {
   //envoi sur la page d'accueil
   async home(req, res) {
@@ -79,7 +82,9 @@ class userController {
       const token = jwt.sign(
         { sub: user._id },
         "a-string-secret-at-least-256-bits-long",
-        { expiresIn: "1h" }
+        {
+          expiresIn: "1h",
+        }
       );
       res.cookie("token", token, {
         httpOnly: true,
@@ -151,6 +156,36 @@ class userController {
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'employé :", error);
       res.status(500).json({ error: "Erreur serveur" });
+    }
+  }
+
+  //Vérifie l'email de l'utilisateur avec un token
+  async verifyEmail(req, res) {
+    try {
+      const { token } = req.params;
+      const decoded = jwt.verify(
+        token,
+        "a-string-secret-at-least-256-bits-long"
+      );
+
+      if (!decoded.id) {
+        return res.status(400).redirect("pages/login");
+      }
+
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return res.status(400).redirect("pages/login");
+      }
+      if (user.isVerified) {
+        return res.status(400).redirect("pages/login");
+      }
+      user.isVerified = true;
+      await user.save();
+
+      res.redirect("pages/index");
+    } catch (error) {
+      console.error("Erreur vérification email:", error);
+      res.status(400).redirect("pages/login");
     }
   }
 }

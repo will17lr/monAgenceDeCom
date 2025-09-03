@@ -14,6 +14,8 @@ userRouter.get("/login", userController.index);
 
 userRouter.get("/logout", userController.logout);
 
+userRouter.get("/verify/:token", userController.verifyEmail);
+
 userRouter.post("/register", validate(createUserSchema), userController.create);
 
 userRouter.post("/login", userController.login);
