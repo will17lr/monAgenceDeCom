@@ -59,7 +59,7 @@
 
             <div class="form__row">
               <label for="review-rating">Note</label>
-              <select id="review-rating" name="rating" required>
+              <select id="review-rating" class="select-clean" name="rating" required>
                 <option value="" selected disabled>Choisir une note</option>
                 <option value="5">★★★★★ (5)</option>
                 <option value="4">★★★★☆ (4)</option>
@@ -108,7 +108,7 @@
           <!-- Versions -->
           <div class="field">
             <label for="version-select">Version</label>
-            <select id="version-select" required></select>
+            <select id="version-select" class="select-clean select-lg" required></select>
           </div>
 
           <!-- Options -->
@@ -153,7 +153,7 @@
           </div>
 
           <div class="d-grid">
-            <button type="submit" id="submit" class="btn btn-primary btn-animate">Ajouter</button>
+            <button type="submit" id="faqSubmit" class="btn btn-primary btn-animate">Ajouter</button>
           </div>
 
           <p id="faqFeedback" class="form__feedback" aria-live="polite" role="status"></p>
@@ -177,14 +177,14 @@
     </section>
 
     <!-- ===================== SECTION CONTACT ===================== -->
-    <section id="contact" class="bg-white" aria-labelledby="contact-title">
+    <section id="contact" aria-labelledby="contact-title">
       <div class="container py-5">
         <h2 id="contact-title">Contact</h2>
         <p class="form-text">
           Besoin d’un conseil ? Joignez votre CV (PDF) ou une image (JPG/PNG) si utile.
         </p>
 
-        <form id="contactForm" action="#" enctype="multipart/form-data" novalidate>
+        <form id="contactForm" action="/api/contact" method="post" enctype="multipart/form-data" novalidate>
           <div class="mb-4">
             <label for="name" class="form-label">Votre nom</label>
             <input type="text" id="name" name="name" class="form-control" placeholder="John Doe" required>
@@ -230,7 +230,7 @@
       </div>
       <div class="footer__bottom">
         <p class="footer__copy">© <span id="year"></span> monAgenceDeCom — Tous droits réservés.</p>
-        <a href="#main" class="footer__toplink" title="Revenir en haut">Haut de page ↑</a>
+        <a href="#main" class="footer__toplink" title="Revenir en haut">Haut de page ↑  </a>
       </div>
     </div>
   </footer>
@@ -296,8 +296,7 @@
       window.addEventListener('scroll', setActive, { passive: true });
       window.addEventListener('resize', setActive);
       setActive();
-    });
-      </script>
-      <script defer src="js/contact.js?v=2"></script>
-</body>
+    })
+  </script>
+  </body>
 </html>

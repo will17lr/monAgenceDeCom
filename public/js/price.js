@@ -9,7 +9,7 @@ const COULEURS = [
 
 const VERSIONS = [
   { value: "std-64",      label: "Standard 64 Go",  base: 299 },
-  { value: "plus-128",    label: "Plus 128 Go",     base: 399 },
+  { value: "plus-128",    label: "Plus    128 Go",  base: 399 },
   { value: "premium-256", label: "Premium 256 Go",  base: 599 },
 ];
 

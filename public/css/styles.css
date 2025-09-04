@@ -239,3 +239,63 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #0d6efd
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ===== Select propre et accessible ===== */
+.select-clean{
+  /* couleurs & rayons */
+  --sel-bg:#fff;
+  --sel-text:#1f2937;
+  --sel-bd:#cfd6e3;
+  --sel-bd-hover:#b8c2d3;
+  --sel-focus:#0d6efd;
+  --sel-radius:10px;
+
+  /* zone de flèche (pavé à droite) */
+  --chev-bg:rgba(0,0,0,.05);
+  --chev-w:2.25rem;
+
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  display:block; width:100%;
+  padding:.625rem calc(var(--chev-w) + .5rem) .625rem .875rem;
+  line-height:1.35;
+  color:var(--sel-text);
+  background:
+    url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") calc(100% - .8rem) 50% / 16px 16px no-repeat,
+    linear-gradient(var(--chev-bg),var(--chev-bg)) right/var(--chev-w) 100% no-repeat,
+    var(--sel-bg);
+  border:1px solid var(--sel-bd);
+  border-radius:var(--sel-radius);
+  background-clip:padding-box;
+  box-shadow:0 1px 0 rgba(0,0,0,.02);
+  cursor:pointer;
+  transition:border-color .15s ease, box-shadow .15s ease, background-color .2s ease;
+}
+.select-clean:hover{ border-color:var(--sel-bd-hover); }
+.select-clean:focus-visible{
+  outline:none;
+  border-color:var(--sel-focus);
+  box-shadow:0 0 0 .25rem rgba(13,110,253,.15);
+}
+
+/* Placeholder grisé tant qu’aucune valeur choisie */
+.select-clean:required:invalid{ color:#6b7280; }
+.select-clean option[value=""]{ color:#9ca3af; }
+
+/* Tailles */
+.select-clean.select-sm{ padding:.5rem calc(var(--chev-w) + .5rem) .5rem .75rem; font-size:.95rem; }
+.select-clean.select-lg{ padding:.75rem calc(var(--chev-w) + .5rem) .75rem 1rem; font-size:1.05rem; }
+
+/* États */
+.select-clean:disabled{ background-color:#f3f4f6; color:#9aa3b2; cursor:not-allowed; }
+.select-clean.is-invalid{ border-color:#dc3545; box-shadow:0 0 0 .2rem rgba(220,53,69,.12); }
+.select-clean.is-valid{ border-color:#28a745; box-shadow:0 0 0 .2rem rgba(40,167,69,.12); }
+
+/* Petits ajustements iOS / Firefox */
+@supports (-webkit-touch-callout:none){ .select-clean{ font-size:16px; } } /* évite le zoom iOS */
+@-moz-document url-prefix(){ .select-clean{ padding-block:.6rem; } }
+
+/* Si Bootstrap est présent, neutraliser son style pour cette classe */
+.form-select.select-clean{
+  padding-right:calc(var(--chev-w) + .75rem);
+  background-image:inherit;
+}

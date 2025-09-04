@@ -11,9 +11,12 @@ const router = Router();
 const processed = new Map();
 setInterval(() => {
   const now = Date.now();
-  for (const [k, t] of processed) if (now - t > 2 * 60_000) processed.delete(k);
+  for (const [k, t] of processed) {
+    if (now - t > 2 * 60_000) processed.delete(k); // expire après 2 min
+  }
 }, 60_000);
-const norm = (s) => (s || "").trim().toLowerCase();
+
+const norm = (s = "") => s.trim().toLowerCase();
 
 // ===== Multer (uploads/) =====
 const storage = multer.diskStorage({
@@ -29,18 +32,26 @@ const fileFilter = (_req, file, cb) => {
   const ok = ["application/pdf", "image/jpeg", "image/png"].includes(file.mimetype);
   cb(ok ? null : new Error("Extension non autorisée (pdf, jpg, png uniquement)"), ok);
 };
-const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }).single("attachment");
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 Mo
+}).single("attachment");
 
-// ===== POST /contact =====
-router.post("/contact", (req, res) => {
+// ===== POST /api/contact =====
+router.post("/api/contact", (req, res) => {
   upload(req, res, async (err) => {
     try {
-      if (err) return res.status(400).json({ ok: false, message: err.message });
+      if (err) {
+        return res.status(400).json({ ok: false, message: err.message });
+      }
 
-      // Idempotency guard (pour éviter 2 envois si double click / double submit)
+      // Idempotency guard
       const key = req.get("X-Idempotency-Key");
       if (key) {
-        if (processed.has(key)) return res.json({ ok: true, dedup: true });
+        if (processed.has(key)) {
+          return res.json({ ok: true, dedup: true });
+        }
         processed.set(key, Date.now());
       }
 
@@ -49,15 +60,18 @@ router.post("/contact", (req, res) => {
         return res.status(400).json({ ok: false, message: "Champs requis manquants." });
       }
 
-      // Prépare la PJ si fournie
+      // Pièce jointe
       const attachments = [];
       if (req.file) {
-        attachments.push({ filename: req.file.originalname || req.file.filename, path: req.file.path });
+        attachments.push({
+          filename: req.file.originalname || req.file.filename,
+          path: req.file.path,
+        });
       }
 
       // Destinataire admin + toggle accusé
-      const TO        = process.env.CONTACT_TO || process.env.EMAIL_USER;
-      const SEND_ACK  = String(process.env.CONTACT_SEND_ACK ?? "true").toLowerCase() === "true";
+      const TO       = process.env.CONTACT_TO || process.env.EMAIL_USER;
+      const SEND_ACK = String(process.env.CONTACT_SEND_ACK ?? "true").toLowerCase() === "true";
 
       // 1) Mail vers l’admin
       await sendEmail({
@@ -72,7 +86,7 @@ router.post("/contact", (req, res) => {
         attachments,
       });
 
-      // 2) Accusé de réception (seulement si activé ET si l’expéditeur n’est pas l’admin)
+      // 2) Accusé de réception (optionnel)
       if (SEND_ACK && norm(email) && norm(email) !== norm(TO)) {
         await sendEmail({
           to: email,
@@ -87,14 +101,14 @@ router.post("/contact", (req, res) => {
         });
       }
 
-      // Nettoyage du fichier uploadé (optionnel)
+      // Nettoyage du fichier uploadé
       if (req.file) await fs.unlink(req.file.path).catch(() => {});
 
-      res.json({ ok: true, message: "Message envoyé avec succès." });
+      return res.json({ ok: true, message: "Message envoyé avec succès." });
     } catch (e) {
       if (req.file) await fs.unlink(req.file.path).catch(() => {});
       console.error("Contact error:", e);
-      res.status(400).json({ ok: false, message: "Erreur serveur pendant l'envoi." });
+      return res.status(500).json({ ok: false, message: "Erreur serveur pendant l'envoi." });
     }
   });
 });

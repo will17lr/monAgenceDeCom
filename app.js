@@ -96,8 +96,28 @@ app.use((err, req, res, next) => {
   res.status(500).render("pages/error", { message: "Erreur serveur" });
 });
 
-// === Lancement
-app.listen(PORT, () => {
-  database();
-  console.log("Serveur démarré sur le port " + PORT);
+// === Lancement (attendre la DB avant d'écouter le port)
+async function start() {
+  try {
+    await database();                 // ✅ attend la connexion Mongo
+    // Optionnel : réaligner les index avec le schéma
+    // await User.syncIndexes();
+
+    app.listen(PORT, () =>
+      console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`)
+    );
+  } catch (err) {
+    console.error("❌ Démarrage impossible (DB) :", err.message);
+    process.exit(1);
+  }
+}
+
+start();
+
+// (facultatif – mieux pour déboguer)
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
 });
